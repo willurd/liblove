@@ -8,9 +8,9 @@ function UIList:initialize (...)
 end
 
 function UIList:update (dt)
-	
+	super.update(self, dt)
 end
 
 function UIList:draw ()
-	
+	super.draw(self)
 end

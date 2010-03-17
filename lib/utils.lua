@@ -31,6 +31,23 @@ function table.last (t)
 	return t[table.maxn(t)]
 end
 
+function table.find (table, match)
+	local t = type(match)
+	for k,v in ipairs(table) do
+		if (t == "function") and match(v) or (v == match) then return v, k end
+	end
+	return nil, -1
+end
+
+function table.update (table, other)
+	for k,v in pairs(other) do
+		table[k] = v
+	end
+	for k,v in ipairs(other) do
+		table[k] = v
+	end
+end
+
 -- from: http://lua-users.org/wiki/SplitJoin
 function string:split (sep, max, isRegex)
 	assert(sep ~= '')

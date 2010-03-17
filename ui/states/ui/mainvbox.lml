@@ -1,6 +1,7 @@
 <vbox onInitialize="onInitialize" onUpdate="onUpdate"
 	onMouseOver="onMouseOver" onMouseOut="onMouseOut"
-	verticalGap="10" width="100" height="100">
+	verticalGap="5" width="100" height="100" paddingTop="5" paddingLeft="5"
+	xmlns:c="ui/components">
     <script>
         <![CDATA[
 			require("lib/essential")
@@ -11,6 +12,7 @@
 				local width, height = dimensions()
 				self.x = width/2 - self.width/2
 				self.y = height/2 - self.height/2
+				self:onMouseOut()
             end
 			
 			function self:onUpdate (event)
@@ -19,14 +21,22 @@
 			end
 			
 			function self:onMouseOver (event)
-				self.color = Color.GREEN
+				self.color = Color.fromString("#bb737a")
+				self.mainlabel.color = Color.fromString("#ccba82")
+				self.label2.color = Color.fromString("#89ccf5")
+				self.label3.color = self.label2.color:copy()
 			end
 			
 			function self:onMouseOut (event)
-				self.color = Color.WHITE
+				self.color = Color.fromString("#123abc")
+				self.mainlabel.color = Color.fromString("#adf276")
+				self.label2.color = Color.WHITE:copy()
+				self.label3.color = self.label2.color:copy()
 			end
         ]]>
     </script>
-    <label value="My List" fontSize="16" />
+    <label id="mainlabel" value="My List" fontSize="18" />
+	<c:hellolabel id="label2" />
+	<c:hellolabel id="label3" value="Goodbye" />
     <list id="mylist" fontSize="12" itemRenderer="ui/list/itemRenderer.lml" />
 </vbox>

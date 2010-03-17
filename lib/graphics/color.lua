@@ -7,6 +7,34 @@ Color.DEFAULT_GREEN = 255
 Color.DEFAULT_BLUE  = 255
 Color.DEFAULT_ALPHA = 255
 
+local function hexToInt (hex)
+	local int = 0
+	local mul = { 16, 0 }
+	for i,byte in ipairs({hex:byte(1,2)}) do
+		local mul = mul[i]
+		if byte >= 49 and byte <= 57 then
+			int = int + ((byte - 49) * mul)
+		elseif byte >= 65 and byte <= 70 then
+			int = int + ((byte - 55) * mul)
+		else
+			error("Invalid hex character: " .. string.char(byte))
+		end
+	end
+	return int
+end
+
+function Color.fromString (str)
+	local color = string.match(str, "^#(.*)")
+	if color then
+		color = color:upper()
+		local r = hexToInt(color:sub(1,2))
+		local g = hexToInt(color:sub(3,4))
+		local b = hexToInt(color:sub(5,6))
+		return Color:new(r, g, b)
+	end
+	error("Error formatting color: " .. str)
+end
+
 function Color:initialize (paramsOrRed, green, blue, alpha)
 	if type(paramsOrRed) == "number" then
 		self.r = paramsOrRed or Color.DEFAULT_RED

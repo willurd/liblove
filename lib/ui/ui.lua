@@ -22,28 +22,51 @@ UI.COMPONENTS = {
 	label     = UILabel
 }
 
-local function createComponent (xml, isroot)
+-- This function is big and gross and should be cleaned up
+local function createComponent (xml, isroot, namespaces)
 	isroot = isroot ~= nil and isroot or false
+	namespaces = namespaces or {}
+	
+	local namespace, name = string.match(xml.name, "(.*)%:(.*)")
 	local ComponentClass = UI.COMPONENTS[xml.name]
 	
-	if ComponentClass == nil then
+	if ComponentClass ~= nil then
+		local component = ComponentClass:new(nil, isroot)
+
+		for _,child in ipairs(xml) do
+			if child.name == "script" then
+				component:doScript(child[1])
+			end
+		end
+		
+		component:updateAttrs(xml.attrs)
+		
+		for _,child in ipairs(xml) do
+			if child.name ~= "script" then
+				component:addChild(createComponent(child, false, component.namespaces))
+			end
+		end
+
+		component:dispatchEvent(Event:new(Event.INITIALIZE))
+		return component
+	elseif namespace then
+		local n = table.find(namespaces, function (n) return n[1] == namespace end)
+		if n then
+			local path = n[2]
+			local filename = os.join(n[2], name) .. ".lua"
+			if love.filesystem.exists(filename) then
+				local component = UI.load(filename)
+				component:updateAttrs(xml.attrs)
+				return component
+			else
+				error("File does not exist: " .. filename)
+			end
+		else
+			error("Unknown namespace: " .. namespace)
+		end
+	else
 		error("Unknown component: " .. xml.name)
 	end
-	
-	local component = ComponentClass:new(xml.attrs, nil, isroot)
-	
-	for _,child in ipairs(xml) do
-		if child.name == "script" then
-			local script = string.gsub(child[1], "^%s*<!%[CDATA%[(.*)%]%]>%s*$", "%1")
-			component:doScript(script)
-		else
-			component:addChild(createComponent(child))
-		end
-	end
-	
-	component:initAttrs()
-	component:dispatchEvent(Event:new(Event.INITIALIZE))
-	return component
 end
 
 function UI.load (filename)
