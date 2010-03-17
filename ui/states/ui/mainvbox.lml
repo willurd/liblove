@@ -1,13 +1,29 @@
-<vbox onInitialize="onInitialize" onUpdate="onUpdate" verticalGap="10">
+<vbox onInitialize="onInitialize" onUpdate="onUpdate"
+	onMouseOver="onMouseOver" onMouseOut="onMouseOut"
+	verticalGap="10" width="100" height="100">
     <script>
         <![CDATA[
+			require("lib/essential")
+			require("lib/graphics/color")
+			
             function self:onInitialize (event)
                 --self.mylist.items = { 1, 2, 3 }
+				local width, height = dimensions()
+				self.x = width/2 - self.width/2
+				self.y = height/2 - self.height/2
             end
 			
 			function self:onUpdate (event)
 				--local p = event.params
 				--print(p.dt) -- the elapsed time for this frame
+			end
+			
+			function self:onMouseOver (event)
+				self.color = Color.GREEN
+			end
+			
+			function self:onMouseOut (event)
+				self.color = Color.WHITE
 			end
         ]]>
     </script>
