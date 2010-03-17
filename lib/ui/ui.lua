@@ -1,6 +1,6 @@
 require("lib/ui/component")
 require("lib/ui/container")
---require("lib/ui/canvas")
+require("lib/ui/canvas")
 require("lib/ui/box")
 require("lib/ui/vbox")
 --require("lib/ui/hbox")
@@ -16,6 +16,7 @@ UI = class("UI")
 UI.COMPONENTS = {
 	component = UIComponent,
 	container = UIContainer,
+	canvas    = UICanvas,
 	box       = UIBox,
 	vbox      = UIVBox,
 	list      = UIList,
@@ -23,16 +24,15 @@ UI.COMPONENTS = {
 }
 
 -- This function is big and gross and should be cleaned up
-local function createComponent (xml, isroot, namespaces)
-	isroot = isroot ~= nil and isroot or false
+local function createComponent (xml, parent, namespaces)
 	namespaces = namespaces or {}
 	
 	local namespace, name = string.match(xml.name, "(.*)%:(.*)")
 	local ComponentClass = UI.COMPONENTS[xml.name]
 	
 	if ComponentClass ~= nil then
-		local component = ComponentClass:new(nil, isroot)
-
+		local component = ComponentClass:new(parent)
+		
 		for _,child in ipairs(xml) do
 			if child.name == "script" then
 				component:doScript(child[1])
@@ -43,7 +43,7 @@ local function createComponent (xml, isroot, namespaces)
 		
 		for _,child in ipairs(xml) do
 			if child.name ~= "script" then
-				component:addChild(createComponent(child, false, component.namespaces))
+				component:addChild(createComponent(child, component, component.namespaces))
 			end
 		end
 
@@ -53,7 +53,7 @@ local function createComponent (xml, isroot, namespaces)
 		local n = table.find(namespaces, function (n) return n[1] == namespace end)
 		if n then
 			local path = n[2]
-			local filename = os.join(n[2], name) .. ".lua"
+			local filename = os.join(n[2], name) .. ".lml"
 			if love.filesystem.exists(filename) then
 				local component = UI.load(filename)
 				component:updateAttrs(xml.attrs)
@@ -65,7 +65,7 @@ local function createComponent (xml, isroot, namespaces)
 			error("Unknown namespace: " .. namespace)
 		end
 	else
-		error("Unknown component: " .. xml.name)
+		error("Unknown UI component: " .. xml.name)
 	end
 end
 
@@ -78,5 +78,5 @@ function UI.load (filename)
 	end
 	
 	local root = xml[1]
-	return createComponent(root, true)
+	return createComponent(root)
 end

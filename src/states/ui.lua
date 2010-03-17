@@ -5,7 +5,7 @@ UIState = class("UIState", State)
 
 function UIState:initialize ()
 	super.initialize(self)
-	self.ui = UI.load("ui/states/ui/mainvbox.lml")
+	self.ui = UI.load("ui/states/ui/acanvas.lml")
 end
 
 function UIState:update (ref, dt)

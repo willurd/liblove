@@ -1,6 +1,6 @@
 <vbox onInitialize="onInitialize" onUpdate="onUpdate"
 	onMouseOver="onMouseOver" onMouseOut="onMouseOut"
-	verticalGap="5" width="100" height="100" paddingTop="5" paddingLeft="5"
+	verticalGap="5" x="20" y="20" width="80%" height="80%" paddingTop="5" paddingLeft="5"
 	xmlns:c="ui/components">
     <script>
         <![CDATA[
@@ -9,9 +9,9 @@
 			
             function self:onInitialize (event)
                 --self.mylist.items = { 1, 2, 3 }
-				local width, height = dimensions()
-				self.x = width/2 - self.width/2
-				self.y = height/2 - self.height/2
+				-- local width, height = dimensions()
+				-- self.x = width/2 - self:getWidth()/2
+				-- self.y = height/2 - self:getWidth()/2
 				self:onMouseOut()
             end
 			

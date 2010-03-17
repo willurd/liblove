@@ -7,12 +7,21 @@ require("lib/math/vector2")
 
 UIComponent = class("UIComponent", EventDispatcher)
 
+local function autoField (value)
+	if type(value) == "number" then return value end
+	if value:match("%%") then return value end
+	if value == "auto" then return value end
+	return tonumber(value)
+end
+
 UIComponent.ATTR_HANDLERS = {
 	color = function (value)
 		return Color.fromString(value)
 	end,
 	x = tonumber,
 	y = tonumber,
+	width = autoField,
+	height = autoField,
 	paddingTop = tonumber,
 	paddingRight = tonumber,
 	paddingBottom = tonumber,
@@ -20,10 +29,10 @@ UIComponent.ATTR_HANDLERS = {
 	fontSize = tonumber
 }
 
-function UIComponent:initialize (children, isRoot)
+function UIComponent:initialize (parent)
 	super.initialize(self)
-	self.children = children or {}
-	self.isRoot = isRoot   or false
+	self.children = {}
+	self.parent = parent
 	self.attrs = {}
 	self.namespaces = {}
 	self.mouseIsOver = false
@@ -38,6 +47,7 @@ function UIComponent:initialize (children, isRoot)
 		paddingRight = 0,
 		paddingBottom = 0,
 		paddingLeft = 0,
+		fontSize = 12,
 		color = "#ffffff",
 		drawMode = "fill"
 	})
@@ -45,8 +55,8 @@ end
 
 function UIComponent:handleAttr (name, value, class)
 	class = class or self.class
-	if self.class.ATTR_HANDLERS then
-		for key,handler in pairs(self.class.ATTR_HANDLERS) do
+	if class.ATTR_HANDLERS then
+		for key,handler in pairs(class.ATTR_HANDLERS) do
 			if key == name then
 				return handler(value), true
 			end
@@ -89,20 +99,17 @@ function UIComponent:update (dt)
 	for _,child in ipairs(self.children) do
 		child:update(dt)
 	end
-	local x = tonumber(self.x)
-	local y = tonumber(self.y)
-	local width = tonumber(self.width)
-	local height = tonumber(self.height)
-	local rect = Rect:new(Vector2:new(x, y), width, height)
-	if rect:intersectsWithPoint(love.mouse.getPosition()) then
+	local b = self:getBounds()
+	local mx, my = love.mouse.getPosition()
+	if b:intersectsWithPoint(mx, my) then
 		if not self.mouseIsOver then
 			self.mouseIsOver = true
-			self:dispatchEvent(Event:new(Event.MOUSEOVER))
+			self:dispatchEvent(Event:new(Event.MOUSEOVER, {x=mx, y=my}))
 		end
 	else
 		if self.mouseIsOver then
 			self.mouseIsOver = false
-			self:dispatchEvent(Event:new(Event.MOUSEOUT))
+			self:dispatchEvent(Event:new(Event.MOUSEOUT, {x=mx, y=my}))
 		end
 	end
 end
@@ -119,4 +126,48 @@ function UIComponent:addChild (child)
 	if child.id then
 		self[child.id] = child
 	end
+end
+
+-- getters and setters
+UIComponent:getterSetter("x", 0)
+UIComponent:getterSetter("y", 0)
+UIComponent:setter("width")
+UIComponent:setter("height")
+
+function UIComponent:getBounds ()
+	return Rect:new(Vector2:new(self:getX(), self:getY()),
+		self:getWidth(), self:getHeight())
+end
+
+function UIComponent:getWidth ()
+	local w = self.width and self.width or "auto"
+	if type(w) == "number" then return w end
+	if w == "auto" then w = "100%" end
+	local p = w:match("^(.*)%%")
+	local width = 0
+	if self.parent then
+		local b = self.parent:getBounds()
+		print(b)
+		width = b.width
+	else
+		local w, h = dimensions()
+		width = w
+	end
+	return width * (p / 100)
+end
+
+function UIComponent:getHeight ()
+	local h = self.height and self.height or "auto"
+	if type(h) == "number" then return h end
+	if h == "auto" then h = "100%" end
+	local p = h:match("^(.*)%%")
+	local height
+	if self.parent then
+		local b = self.parent:getBounds()
+		height = b.height
+	else
+		local w, h = dimensions()
+		height = h
+	end
+	return height * (p / 100)
 end

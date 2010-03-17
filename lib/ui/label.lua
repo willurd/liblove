@@ -11,7 +11,7 @@ end
 
 function UILabel:updateAttrs (attrs)
 	super.updateAttrs(self, attrs)
-	if self.fontSize then
+	if attrs.fontSize then
 		love.graphics.setFont(self.fontSize)
 		self.font = love.graphics.getFont()
 		self.height = self.font:getHeight()
