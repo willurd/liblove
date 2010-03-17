@@ -8,9 +8,9 @@ function UIBox:initialize (...)
 end
 
 function UIBox:update (dt)
-	
+	super.update(self, dt)
 end
 
 function UIBox:draw ()
-	
+	super.draw(self)
 end

@@ -8,13 +8,9 @@ function UIVBox:initialize (...)
 end
 
 function UIVBox:update (dt)
-	
+	super.update(self, dt)
 end
 
 function UIVBox:draw ()
-	
-end
-
-function UIVBox:dosomething ()
-	print('in dosomething(): ' .. tostring(self.verticalGap))
+	super.draw(self)
 end

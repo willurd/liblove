@@ -1,10 +1,14 @@
-<vbox onInitialize="onInitialize" verticalGap="10">
+<vbox onInitialize="onInitialize" onUpdate="onUpdate" verticalGap="10">
     <script>
         <![CDATA[
             function self:onInitialize (event)
-                self:dosomething()
                 --self.mylist.items = { 1, 2, 3 }
             end
+			
+			function self:onUpdate (event)
+				--local p = event.params
+				--print(p.dt) -- the elapsed time for this frame
+			end
         ]]>
     </script>
     <label value="My List" fontSize="16" />

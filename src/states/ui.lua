@@ -11,10 +11,12 @@ end
 function UIState:update (ref, dt)
 	super.update(self, ref, dt)
 	love.graphics.setCaption(love.graphics.getCaption() .. ": UI State")
+	self.ui:update(dt)
 end
 
 function UIState:draw (ref)
 	super.draw(self, ref)
+	self.ui:draw()
 end
 
 function UIState:mousepressed (ref, x, y, button)

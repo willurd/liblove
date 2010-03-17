@@ -34,7 +34,7 @@ local function createComponent (xml, isroot)
 	
 	for _,child in ipairs(xml) do
 		if child.name == "script" then
-			local script = string.gsub(child[1], "%s*<!%[CDATA%[(.*)%]%]>%s*", "%1")
+			local script = string.gsub(child[1], "^%s*<!%[CDATA%[(.*)%]%]>%s*$", "%1")
 			component:doScript(script)
 		else
 			component:addChild(createComponent(child))

@@ -8,9 +8,9 @@ function UIContainer:initialize (...)
 end
 
 function UIContainer:update (dt)
-	
+	super.update(self, dt)
 end
 
 function UIContainer:draw ()
-	
+	super.draw(self)
 end

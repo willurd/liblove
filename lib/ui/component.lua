@@ -11,18 +11,9 @@ function UIComponent:initialize (attrs, children, isRoot)
 	self.isRoot   = isRoot   or false
 end
 
-function UIComponent:update (dt)
-	
-end
-
-function UIComponent:draw ()
-	
-end
-
 function UIComponent:initAttrs ()
 	for key,value in pairs(self.attrs) do
-		local match = string.match(key, "on(%u.*)")
-		if match then print(10, match, match:upper()) end
+		local match = string.match(key, "^on(%u.*)$")
 		if match then
 			self:addEventListener(Event[match:upper()], self, value)
 		else
@@ -34,9 +25,16 @@ end
 function UIComponent:doScript (script)
 	local t = _G.self
 	_G.self = self
-	script = loadstring(script)
-	script()
+	assert(loadstring(script))()
 	_G.self = t
+end
+
+function UIComponent:update (dt)
+	self:dispatchEvent(Event:new(Event.UPDATE, {dt=dt}))
+end
+
+function UIComponent:draw ()
+	self:dispatchEvent(Event:new(Event.DRAW))
 end
 
 function UIComponent:addChild (child)
