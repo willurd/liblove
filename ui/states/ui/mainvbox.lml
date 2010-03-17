@@ -1,0 +1,12 @@
+<vbox onInitialize="onInitialize" verticalGap="10">
+    <script>
+        <![CDATA[
+            function self:onInitialize (event)
+                self:dosomething()
+                --self.mylist.items = { 1, 2, 3 }
+            end
+        ]]>
+    </script>
+    <label value="My List" fontSize="16" />
+    <list id="mylist" fontSize="12" itemRenderer="ui/list/itemRenderer.lml" />
+</vbox>

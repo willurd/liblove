@@ -6,6 +6,27 @@ function isnot (value, t)
 	return type(value) ~= t
 end
 
+function times (str, n)
+	s = ""
+	for i = 1,n do
+		s = s .. str
+	end
+	return s
+end
+
+function pprint (t, level)
+	level = level or 0
+	for k,v in pairs(t) do
+		io.write(times("-- ",level) .. k)
+		if type(v) == "table" then
+			io.write("\n")
+			pprint(v, level+1)
+		else
+			io.write(": " .. tostring(v) .. "\n")
+		end
+	end
+end
+
 function table.last (t)
 	return t[table.maxn(t)]
 end

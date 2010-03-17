@@ -16,6 +16,7 @@ end
 
 function PhysicsState:update (ref, dt)
 	super.update(self, ref, dt)
+	love.graphics.setCaption(love.graphics.getCaption() .. ": Physics State")
 	self.circle:update(dt, self.rect)
 end
 

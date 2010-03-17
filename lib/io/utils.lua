@@ -9,10 +9,20 @@ function trace (s, ...)
 end
 
 function printf (s, ...)
+	s = s .. "\n"
 	io.write(s:format(...))
 end
 
 function printff (s, ...)
 	printf(s, ...)
+	io.flush()
+end
+
+function iowrite (s, ...)
+	io.write(s:format(...))
+end
+
+function iowritef (s, ...)
+	iowrite(s, ...)
 	io.flush()
 end

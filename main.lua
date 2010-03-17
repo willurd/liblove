@@ -24,17 +24,17 @@ function love.load (args)
 	math.randomseed(love.timer.getTime())
 	game = Game:new({
 		physics = PhysicsState:new(),
-		pushbutton = PushButtonState:new()
+		ui = UIState:new()
 	})
-	game:changeState("physics")
+	game:changeState("ui")
 end
 
 function love.update (dt)
+	love.graphics.setCaption("Lib Test (" .. love.timer.getFPS() .. " fps)")
 	game:update(dt)
 end
 
 function love.draw ()
-	love.graphics.setCaption("Lib Test (" .. love.timer.getFPS() .. " fps)")
 	game:draw()
 end
 
