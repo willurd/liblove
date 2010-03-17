@@ -1,7 +1,7 @@
 <vbox xmlns:c="ui/components"
 	onInitialize="onInitialize" onUpdate="onUpdate"
 	onMouseOver="onMouseOver" onMouseOut="onMouseOut"
-	verticalGap="5" top="20" right="20" left="20" bottom="20"
+	verticalGap="5" x="100" y="100"
 	paddingTop="5" paddingLeft="5">
     <script>
         <![CDATA[
@@ -9,16 +9,37 @@
 			require("lib/graphics/color")
 			
             function self:onInitialize (event)
-                --self.mylist.items = { 1, 2, 3 }
-				-- local width, height = dimensions()
-				-- self.x = width/2 - self:getWidth()/2
-				-- self.y = height/2 - self:getWidth()/2
+				local width, height = dimensions()
+				self.width = width - (self:getX() * 2)
+				self.height = height - (self:getY() * 2)
+				self._vel = Vector2:new(10, 0)
+				self._up = Vector2:new(20, -20)
 				self:onMouseOut()
             end
 			
 			function self:onUpdate (event)
-				--local p = event.params
-				--print(p.dt) -- the elapsed time for this frame
+				local dt = event.params.dt
+				self._vel.x = self._vel.x + (self._up.x * dt)
+				self._vel.y = self._vel.y + (self._up.y * dt)
+				
+				if self._vel.x < -10 then
+					self._up.x = math.abs(self._up.x)
+				end
+				
+				if self._vel.x > 10 then
+					self._up.x = math.abs(self._up.x) * -1
+				end
+				
+				if self._vel.y < -10 then
+					self._up.y = math.abs(self._up.y)
+				end
+				
+				if self._vel.y > 10 then
+					self._up.y = math.abs(self._up.y) * -1
+				end
+				
+				self.x = self:getX() + (self._vel.x * dt)
+				self.y = self:getY() + (self._vel.y * dt)
 			end
 			
 			function self:onMouseOver (event)
