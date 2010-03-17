@@ -24,7 +24,7 @@ function UIVBox:update (dt)
 	for _,child in ipairs(self.children) do
 		child.x = p.x + self.paddingLeft
 		child.y = y
-		y = y + child.height + self.verticalGap
+		y = y + child:getHeight() + self.verticalGap
 	end
 	super.update(self, dt)
 end

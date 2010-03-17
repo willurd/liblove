@@ -22,6 +22,10 @@ UIComponent.ATTR_HANDLERS = {
 	y = tonumber,
 	width = autoField,
 	height = autoField,
+	top = tonumber,
+	right = tonumber,
+	bottom = tonumber,
+	left = tonumber,
 	paddingTop = tonumber,
 	paddingRight = tonumber,
 	paddingBottom = tonumber,
@@ -39,10 +43,8 @@ function UIComponent:initialize (parent)
 	
 	-- Default attributes
 	self:updateAttrs({
-		x = 0,
-		y = 0,
-		width = 0, -- "auto" ?
-		height = 0, -- "auto" ?
+		width = "auto",
+		height = "auto",
 		paddingTop = 0,
 		paddingRight = 0,
 		paddingBottom = 0,
@@ -129,8 +131,12 @@ function UIComponent:addChild (child)
 end
 
 -- getters and setters
-UIComponent:getterSetter("x", 0)
-UIComponent:getterSetter("y", 0)
+UIComponent:setter("x")
+UIComponent:setter("y")
+UIComponent:getterSetter("top")
+UIComponent:getterSetter("right")
+UIComponent:getterSetter("bottom")
+UIComponent:getterSetter("left")
 UIComponent:setter("width")
 UIComponent:setter("height")
 
@@ -139,7 +145,28 @@ function UIComponent:getBounds ()
 		self:getWidth(), self:getHeight())
 end
 
+function UIComponent:getX ()
+	local x = self.x
+	if x then return x end
+	local left = self:getLeft()
+	if left then return left end
+	return 0
+end
+
+function UIComponent:getY ()
+	local y = self.y
+	if y then return y end
+	local top = self:getTop()
+	if top then return top end
+	return 0
+end
+
 function UIComponent:getWidth ()
+	local right = self:getRight()
+	if right then
+		local w = love.graphics.getWidth()
+		return w - right - self:getX()
+	end
 	local w = self.width and self.width or "auto"
 	if type(w) == "number" then return w end
 	if w == "auto" then w = "100%" end
@@ -147,16 +174,20 @@ function UIComponent:getWidth ()
 	local width = 0
 	if self.parent then
 		local b = self.parent:getBounds()
-		print(b)
 		width = b.width
 	else
-		local w, h = dimensions()
-		width = w
+		width = love.graphics.getWidth()
 	end
+	width = width - self:getX()
 	return width * (p / 100)
 end
 
 function UIComponent:getHeight ()
+	local bottom = self:getBottom()
+	if bottom then
+		local h = love.graphics.getHeight()
+		return h - bottom - self:getY()
+	end
 	local h = self.height and self.height or "auto"
 	if type(h) == "number" then return h end
 	if h == "auto" then h = "100%" end
@@ -166,8 +197,8 @@ function UIComponent:getHeight ()
 		local b = self.parent:getBounds()
 		height = b.height
 	else
-		local w, h = dimensions()
-		height = h
+		height = love.graphics.getHeight()
 	end
+	height = height - self:getY()
 	return height * (p / 100)
 end

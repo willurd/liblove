@@ -25,5 +25,5 @@ end
 function UILabel:draw ()
 	self.color:set()
 	love.graphics.setFont(self.font)
-	love.graphics.print(self.value, self.x, self.y + self.fontSize)
+	love.graphics.print(self.value, self:getX(), self:getY() + self.fontSize)
 end
