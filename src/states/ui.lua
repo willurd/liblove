@@ -1,4 +1,5 @@
 require("lib/essential")
+require("lib/states/state")
 require("lib/ui/ui")
 
 UIState = class("UIState", State)
